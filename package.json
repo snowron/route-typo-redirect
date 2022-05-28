@@ -1,0 +1,33 @@
+{
+  "name": "route-typo-redirect",
+  "version": "1.0.0",
+  "description": "An Express middleware helps accesing to routes with typos",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Murat TURAN",
+  "license": "ISC",
+  "dependencies": {
+    "fuzzy-comparison": "^2.0.0",
+    "js-levenshtein": "^1.1.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snowron/route-typo-redirect.git"
+  },
+  "keywords": [
+    "typo",
+    "express",
+    "routes",
+    "middleware",
+    "typo",
+    "redirect",
+    "route",
+    "redirect"
+  ],
+  "bugs": {
+    "url": "https://github.com/snowron/route-typo-redirect/issues"
+  },
+  "homepage": "https://github.com/snowron/route-typo-redirect#readme"
+}
