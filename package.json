@@ -4,7 +4,7 @@
   "description": "An Express middleware helps accesing to routes with typos",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "Murat TURAN",
   "license": "ISC",
@@ -29,5 +29,8 @@
   "bugs": {
     "url": "https://github.com/snowron/route-typo-redirect/issues"
   },
-  "homepage": "https://github.com/snowron/route-typo-redirect#readme"
+  "homepage": "https://github.com/snowron/route-typo-redirect#readme",
+  "devDependencies": {
+    "jest": "^28.1.1"
+  }
 }
