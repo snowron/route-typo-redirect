@@ -8,41 +8,42 @@ module.exports = function (options) {
             return
         }
 
-        for (const blacklistItem of options.blacklist ?? []) {
-            if (req.originalUrl != blacklistItem) {
-                next()
-                return
-            }
-        }
-
         for (let route of options.routes ?? []) {
-            let routeSplitted = route.split("/")
-            let originalUrlSplitted = req.originalUrl.split("/")
-            if (routeSplitted.length === routeSplitted.length && route.includes("/:")) {
-                if (levenshtein(routeSplitted[1], originalUrlSplitted[1]) <= 2 && fuzzyComparison.default(routeSplitted[1], originalUrlSplitted[1], { threshold: options.threshold ?? 2 })) {
+            const routeSplitted = route.split("/")
+            const originalPath = new URL(req.url, `http://h/`).pathname;
+            const originalUrlSplitted = originalPath.split("/")
+
+            if (routeSplitted.length === originalUrlSplitted.length && route.includes("/:")) {
+                if (levenshtein(routeSplitted[1], originalUrlSplitted[1]) <= (options.levenThreshold ?? 2) && fuzzyComparison.default(routeSplitted[1], originalUrlSplitted[1], { threshold: options.fuzzyThreshold ?? 2 })) {
                     redirect(req, res, route)
                 }
-            } else if (routeSplitted.length === routeSplitted.length) {
-                if (levenshtein(req.originalUrl, route) <= 2 && fuzzyComparison.default(req.originalUrl, route, { threshold: options.threshold ?? 2 })) {
+            } else if (routeSplitted.length === originalUrlSplitted.length) {
+                if (levenshtein(routeSplitted[1], originalUrlSplitted[1]) <= (options.levenThreshold ?? 2) && fuzzyComparison.default(originalUrlSplitted[1], routeSplitted[1], { threshold: options.fuzzyThreshold ?? 2 })) {
                     redirect(req, res, route)
                 }
             }
-
         }
         next()
     }
 
     function redirect(req, res, route) {
+        for (const blacklistRoute of options.blacklist ?? []) {
+            if (route == blacklistRoute) {
+                return
+            }
+        }
+
         if (route.includes("/:")) {
             let routeSplitted = route.split("/")
-            let originalUrlSplitted = req.originalUrl.split("/")
+            const originalPath = new URL(req.url, `http://h/`).pathname;
+            const originalUrlSplitted = originalPath.split("/")
             routeSplitted[2] = originalUrlSplitted[2]
             route = routeSplitted.join("/")
         }
 
         if (Object.keys(req.query).length != 0) {
-            const queryParams = new URL(req.url, `http://${req.headers.host}/`);
-            route += `?${queryParams}`
+            const queryParams = new URL(req.url, `http://h/`);
+            route += `?${queryParams.searchParams.toString()}`
         }
         res.redirect(route)
     }
