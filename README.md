@@ -17,16 +17,16 @@ Middleware needs your routes with array of strings. It gets the request path and
 ```js
 const typoRedirect = require('route-typo-redirect')
 
-app.use(typoRedirect({
+app.use("*",typoRedirect({
     routes: ["/chat", "/about/:id", "/home"]
 }))
 
-app.use(typoRedirect({
+app.use("*",typoRedirect({
     routes: ["/chat", "/about/:id", "/home"],
     blacklist: ["/user"],
 }))
 
-app.use(typoRedirect({
+app.use("*",typoRedirect({
     routes: ["/chat", "/about/:id", "/home"],
     blacklist: ["/user"],
     levenThreshold: 2,
@@ -38,14 +38,14 @@ Also there is a cool snippet to get all routes from Express
 
 ```js
   function availableRoutes() {
-    return app._router.stack
-      .filter((r) => r.route)
-      .map((r) => {
-        return r.route.path !== "/" ? r.route.path : null;
-      });
+      return app._router.stack
+          .filter((r) => r.route && r.route.path !== "/")
+          .map((r) => {
+              return r.route.path
+          });
   }
 
-  app.use(typoRedirect({
+  app.use("*",typoRedirect({
     routes: availableRoutes(),
     blacklist: ["/user"],
     levenThreshold: 2,
