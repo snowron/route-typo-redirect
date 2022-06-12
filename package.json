@@ -1,6 +1,6 @@
 {
   "name": "route-typo-redirect",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "An Express middleware helps accesing to routes with typos",
   "main": "index.js",
   "scripts": {
