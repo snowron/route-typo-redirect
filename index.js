@@ -10,16 +10,17 @@ module.exports = function (options) {
 
         for (let route of options.routes ?? []) {
             const routeSplitted = route.split("/")
-            const originalPath = new URL(req.url, `http://h/`).pathname;
-            const originalUrlSplitted = originalPath.split("/")
+            const originalUrlSplitted = req.baseUrl.split("/")
 
             if (routeSplitted.length === originalUrlSplitted.length && route.includes("/:")) {
                 if (levenshtein(routeSplitted[1], originalUrlSplitted[1]) <= (options.levenThreshold ?? 2) && fuzzyComparison.default(routeSplitted[1], originalUrlSplitted[1], { threshold: options.fuzzyThreshold ?? 2 })) {
                     redirect(req, res, route)
+                    return
                 }
             } else if (routeSplitted.length === originalUrlSplitted.length) {
                 if (levenshtein(routeSplitted[1], originalUrlSplitted[1]) <= (options.levenThreshold ?? 2) && fuzzyComparison.default(originalUrlSplitted[1], routeSplitted[1], { threshold: options.fuzzyThreshold ?? 2 })) {
                     redirect(req, res, route)
+                    return
                 }
             }
         }
@@ -35,16 +36,16 @@ module.exports = function (options) {
 
         if (route.includes("/:")) {
             let routeSplitted = route.split("/")
-            const originalPath = new URL(req.url, `http://h/`).pathname;
-            const originalUrlSplitted = originalPath.split("/")
+            const originalUrlSplitted = req.baseUrl.split("/")
             routeSplitted[2] = originalUrlSplitted[2]
             route = routeSplitted.join("/")
         }
 
         if (Object.keys(req.query).length != 0) {
-            const queryParams = new URL(req.url, `http://h/`);
+            const queryParams = new URL(req.originalUrl, `http://h/`);
             route += `?${queryParams.searchParams.toString()}`
         }
+
         res.redirect(route)
     }
 }

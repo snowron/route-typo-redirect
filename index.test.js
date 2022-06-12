@@ -17,28 +17,31 @@ describe("package tests", () => {
     it('should return when route matches with one of blacklist route items', () => {
         const req = {
             method: "GET",
-            url: "/blocks",
+            baseUrl: "/blocks",
             query: {}
         }
-        const res = {}
+        const res = {
+            redirect: jest.fn(),
+        }
         const next = jest.fn()
 
         middlewareUnderTest({ routes: ["/chat", "/block"], blacklist: ["/block"] })(req, res, next)
-        expect(next).toHaveBeenCalledTimes(1)
+        expect(res.redirect).toHaveBeenCalledTimes(0)
     });
 
     it('should redirect when route matches with one of related route items', () => {
         const testCases = [
-            { url: "/chayy", result: "/chat" },
-            { url: "/chayy/123", result: "/chat/123" },
-            { url: "/chayy?window=open", query: { window: "open" }, result: "/chat?window=open" },
-            { url: "/chayy/123?window=me", query: { window: "me" }, result: "/chat/123?window=me" },
+            { baseUrl: "/chayy", url: "/chayy", result: "/chat" },
+            { baseUrl: "/chayy/123", url: "/chayy/123", result: "/chat/123" },
+            { baseUrl: "/chayy", url: "/chayy?window=open", query: { window: "open" }, result: "/chat?window=open" },
+            { baseUrl: "/chayy/123", url: "/chayy/123?window=me", query: { window: "me" }, result: "/chat/123?window=me" },
         ]
 
         for (const testCase of testCases) {
             const req = {
                 method: "GET",
-                url: testCase.url,
+                baseUrl: testCase.baseUrl,
+                originalUrl: testCase.url,
                 query: testCase.query ?? {}
             }
             const res = {
