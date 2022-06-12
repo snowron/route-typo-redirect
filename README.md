@@ -34,6 +34,25 @@ app.use(typoRedirect({
 }))
 ```
 
+Also there is a cool snippet to get all routes from Express
+
+```js
+  function availableRoutes() {
+    return app._router.stack
+      .filter((r) => r.route)
+      .map((r) => {
+        return r.route.path !== "/" ? r.route.path : null;
+      });
+  }
+
+  app.use(typoRedirect({
+    routes: availableRoutes(),
+    blacklist: ["/user"],
+    levenThreshold: 2,
+    fuzzyThreshold: 4,
+}))
+```
+
 ## Demo
 
 [Example](https://github.com/snowron/route-typo-redirect/blob/master/example/app.js)
